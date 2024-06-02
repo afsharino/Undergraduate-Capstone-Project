@@ -3,6 +3,7 @@ import os
 import json
 import glob
 import pandas as pd
+import numpy as np
 
 #_____________ read_data _____________
 def read_data(base_dir:str) -> dict:
@@ -71,3 +72,26 @@ def convert_data_to_dataframe(data:dict) -> dict:
         all_dataframes[directory] = temp_df
 
     return all_dataframes
+
+#_____________ check_integrity _____________
+def check_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
+    try:
+        # Get the Date column of the first DataFrame
+        reference_dates = dfs[0]['Date']
+        
+        # Flag to indicate if all Date columns are the same
+        all_dates_same = True
+        
+        # Iterate over the rest of the DataFrames
+        for df in dfs[1:]:
+            # Check if the Date column of the current DataFrame is equal to the reference Dates
+            if not np.all(df['Date'] == reference_dates):
+                all_dates_same = False
+                break
+        
+        if all_dates_same:
+            print(f"All DataFrames have the same Date values for '{directory_name}' directory.\n")
+        else:
+            print(f"Not all DataFrames have the same Date values for '{directory_name}' directory.\n")
+    except Exception as e:
+        print(f"Error: {e} for {directory_name}\n")
