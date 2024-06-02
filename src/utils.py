@@ -14,7 +14,7 @@ def read_data(base_dir:str) -> dict:
         dict: a dictionary of data  key(dir_name) : value(key(indiactor_name) : value(indicator_Values))
     """
     data = dict()
-    
+
     # Check if the directory is empty or not
     if os.listdir(base_dir) == []:
         print(f"The directory is empty!\n")
@@ -30,7 +30,7 @@ def read_data(base_dir:str) -> dict:
         data[dir_name] = {}
         dir_path = os.path.join(base_dir, dir_name)
         for file_path in glob.glob(os.path.join(dir_path, '*.json')):
-            name = file_path.split('\\')[-1].split(".")[0].strip()
+            name = file_path.split('/')[-1].split(".")[0].strip() # Change "/" to \\ if you are on windows!
             print(f"Start Reading {name}...")
              # Load JSON file into DataFrame
             with open(file_path, 'r') as file:
