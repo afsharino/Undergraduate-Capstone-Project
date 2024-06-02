@@ -2,6 +2,7 @@
 import os
 import json
 import glob
+import pandas as pd
 
 #_____________ read_data _____________
 def read_data(base_dir:str) -> dict:
@@ -40,3 +41,33 @@ def read_data(base_dir:str) -> dict:
                 print(f"{name} loaded succesfully :)\n")
 
     return data
+
+#_____________ convert_data_to_dataframe _____________
+def convert_data_to_dataframe(data:dict) -> dict:
+    """This function used to convert indicator's data and timestap to dataframe
+
+    Args:
+        data (dict): a dictionary of data  key(dir_name) : value(key(indiactor_name) : value(indicator_Values))
+
+    Returns:
+        dict: a dictionary of data  key(dir_name) : value(list[Pandas_DataFrames])
+    """
+    all_dataframes = {}
+    for directory in data.keys():
+        temp_df = []
+        for indicator in data[directory].keys():
+            # Convert loaded json to pandas dataframe
+            temp_df_indicator = pd.DataFrame(data[directory][indicator], columns=['Timestamp', indicator])
+            
+            # Convert Unix timestamp to datetime
+            temp_df_indicator['Date'] = pd.to_datetime(temp_df_indicator['Timestamp'], unit='ms')
+    
+            # # Drop the 'Timestamp' column
+            temp_df_indicator.drop(columns=['Timestamp'], inplace=True)
+            
+            # Append the DataFrame to our list of DataFrames
+            temp_df.append(temp_df_indicator)
+    
+        all_dataframes[directory] = temp_df
+
+    return all_dataframes
