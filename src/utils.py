@@ -4,6 +4,7 @@ import json
 import glob
 import pandas as pd
 import numpy as np
+from typing import List
 
 #_____________ read_data _____________
 def read_data(base_dir:str) -> dict:
@@ -74,7 +75,13 @@ def convert_data_to_dataframe(data:dict) -> dict:
     return all_dataframes
 
 #_____________ check_date_integrity _____________
-def check_date_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
+def check_date_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
+    """A function to check integrity between dates in each category
+
+    Args:
+        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        directory_name (str): Main Category that contains indicators
+    """
     try:
         # Get the Date column of the first DataFrame
         reference_dates = dfs[0]['Date']
@@ -98,7 +105,13 @@ def check_date_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
 
 
 #_____________ check_shape_integrity _____________
-def check_shape_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
+def check_shape_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
+    """A Function to check for shape integrity between indicators in one category
+
+    Args:
+        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        directory_name (str): Main Category that contains indicators
+    """
     try:
 
         # Get the shape of the first DataFrame
@@ -136,13 +149,30 @@ def check_shape_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
         print(f"Error: {e} for {directory_name}-{current_indicator_name}\n")
 
 #_____________ check_period_integrity _____________
-def check_period_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
+def check_period_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
+    """A Function to show start and end date of the each indicator
+
+    Args:
+        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        directory_name (str): Main Category that contains indicators
+    """
     print(f"Period Integrity for _______ {directory_name} _______\n")
     for indicator in dfs:
         print((str(indicator.Date.min()).split()[0], str(indicator.Date.max()).split()[0]))
 
 #_____________ drop_indicator _____________
-def drop_indicator(dfs:pd.DataFrame, based_on:str, month:str=None, day:str=None) -> list:
+def drop_indicator(dfs:List[pd.DataFrame], based_on:str, month:str=None, day:str=None) -> list:
+    """The function is used to drop the indicators that can not be aligend with other indicators because of less datapoints
+
+    Args:
+        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        based_on (str): _shoud be chosen between on of the "start" or "end"
+        month (str, optional): Between this parameter and day one should be chosen with value like "08". Defaults to None.
+        day (str, optional): Between this parameter and month one should be chosen with value like "08". Defaults to None.
+
+    Returns:
+        list: return list of DataFrames that are alignable
+    """
     if day == None:
         if based_on == 'start':
             return [indicator for indicator in dfs if month != (str(indicator.Date.min()).split()[0]).split('-')[1]]
