@@ -137,6 +137,35 @@ def check_shape_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
 
 #_____________ check_period_integrity _____________
 def check_period_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
-    print(f"Period Integrity for _______{directory_name}_______\n")
+    print(f"Period Integrity for _______ {directory_name} _______\n")
     for indicator in dfs:
         print((str(indicator.Date.min()).split()[0], str(indicator.Date.max()).split()[0]))
+
+#_____________ drop_indicator _____________
+def drop_indicator(dfs:pd.DataFrame, based_on:str, month:str=None, day:str=None) -> list:
+    if day == None:
+        if based_on == 'start':
+            return [indicator for indicator in dfs if month != (str(indicator.Date.min()).split()[0]).split('-')[1]]
+        
+        elif based_on == 'end':
+            return [indicator for indicator in dfs if month != (str(indicator.Date.max()).split()[0]).split('-')[1]]
+        else:
+            print(f"Invalid based_on parameter!")
+
+    if month == None:
+        if based_on == 'start':
+            return [indicator for indicator in dfs if day != (str(indicator.Date.min()).split()[0]).split('-')[2]]
+        
+        elif based_on == 'end':
+            return [indicator for indicator in dfs if day != (str(indicator.Date.max()).split()[0]).split('-')[2]]
+        else:
+            print(f"Invalid based_on parameter!")
+
+    if day == None and month==None:
+        print(f"Please send a value for one of the parameters month or day!")
+    
+    if day != None and month!=None:
+        print(f"You can not choose value for both month and day, one should be None!")
+
+
+        
