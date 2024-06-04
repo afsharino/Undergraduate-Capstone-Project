@@ -161,7 +161,7 @@ def check_period_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
         print((str(indicator.Date.min()).split()[0], str(indicator.Date.max()).split()[0]))
 
 #_____________ drop_indicator _____________
-def drop_indicator(dfs:List[pd.DataFrame], based_on:str, month:str=None, day:str=None) -> list:
+def drop_indicator(dfs:List[pd.DataFrame], based_on:str, month:str=None, day:str=None) -> List[pd.DataFrame]:
     """The function is used to drop the indicators that can not be aligend with other indicators because of less datapoints
 
     Args:
@@ -171,7 +171,7 @@ def drop_indicator(dfs:List[pd.DataFrame], based_on:str, month:str=None, day:str
         day (str, optional): Between this parameter and month one should be chosen with value like "08". Defaults to None.
 
     Returns:
-        list: return list of DataFrames that are alignable
+        List[pd.DataFrame]: return list of DataFrames that are alignable
     """
     if day == None:
         if based_on == 'start':
@@ -198,4 +198,19 @@ def drop_indicator(dfs:List[pd.DataFrame], based_on:str, month:str=None, day:str
         print(f"You can not choose value for both month and day, one should be None!")
 
 
-        
+def align_dataframes(dfs:List[pd.DataFrame], directory_name:str) -> List[pd.DataFrame]:
+    """A f unction to align all indicators to same time period
+
+    Args:
+        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        directory_name (str): Main Category that contains indicators
+
+    Returns:
+        List[pd.DataFrame]: return list of DataFrames that are aliged
+    """
+    for index in range(len(dfs)):     
+        dfs[index] = dfs[index][(dfs[index]['Date'] >= '2021-03-12') & (dfs[index]['Date'] <= '2024-03-08')].copy()
+        dfs[index].reset_index(inplace=True)
+        dfs[index].drop(columns=['index'], inplace=True)
+
+    print(f"{directory_name} DataFrames aligned succeessfully :)")
