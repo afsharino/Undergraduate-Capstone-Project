@@ -73,8 +73,8 @@ def convert_data_to_dataframe(data:dict) -> dict:
 
     return all_dataframes
 
-#_____________ check_integrity _____________
-def check_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
+#_____________ check_date_integrity _____________
+def check_date_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
     try:
         # Get the Date column of the first DataFrame
         reference_dates = dfs[0]['Date']
@@ -95,3 +95,48 @@ def check_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
             print(f"Not all DataFrames have the same Date values for '{directory_name}' directory.\n")
     except Exception as e:
         print(f"Error: {e} for {directory_name}\n")
+
+
+#_____________ check_shape_integrity _____________
+def check_shape_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
+    try:
+
+        # Get the shape of the first DataFrame
+        reference_shape = dfs[0].shape[0]
+
+        # Get the name of the first indicator
+        reference_indicator_name = dfs[0].columns[0]
+
+        # Current indicator's name
+        current_indicator_name = ""
+
+        # Flag to indicate if all shapes are the same
+        all_shapes_same = True
+
+        # Iterate over the rest of the DataFrames
+        for df in dfs[1:]:
+            # Get the shape of the current DataFrame
+            current_shape = df.shape[0]
+
+            # Get the name of the current indicator
+            current_indicator_name = df.columns[0]
+
+            # Check if the  shape of the first column of the current DataFrame is equal to the reference shape
+            if not (df.shape[0] == reference_shape):
+                all_shapes_same = False
+                break
+
+        if all_shapes_same:
+            print(f"All DataFrames have the same shape values for '{directory_name}' directory.")
+            print(f"The shape is {reference_shape}.\n")
+        else:
+            print(f"Not all DataFrames have the same Date values for '{directory_name}' directory.")
+            print(f"Refrence: {reference_indicator_name}:{reference_shape} - Current:{current_indicator_name}:{current_shape}\n")
+    except Exception as e:
+        print(f"Error: {e} for {directory_name}-{current_indicator_name}\n")
+
+#_____________ check_period_integrity _____________
+def check_period_integrity(dfs:pd.DataFrame, directory_name:str) -> None:
+    print(f"Period Integrity for _______{directory_name}_______\n")
+    for indicator in dfs:
+        print((str(indicator.Date.min()).split()[0], str(indicator.Date.max()).split()[0]))
