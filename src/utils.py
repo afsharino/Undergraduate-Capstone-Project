@@ -217,7 +217,7 @@ def align_dataframes(dfs:List[pd.DataFrame], directory_name:str) -> List[pd.Data
 
     return dfs
 
-
+#__________________________ combine_dfs __________________________
 def combine_dfs(df:List[pd.DataFrame]) -> pd.DataFrame:
     """A function used to combine indicator DataFrames in each category
 
@@ -246,3 +246,21 @@ def combine_dfs(df:List[pd.DataFrame]) -> pd.DataFrame:
 
     # Return the resulting DataFrame with duplicates removed
     return combined_df
+
+#__________________________ fearandgreed_integrity_check __________________________
+def fearandgreed_integrity_check(fearandgreed_df:pd.DataFrame, others_df:pd.DataFrame, dir_name:str) -> None:
+    """A function to check integrity between "fear and greed" dates and other indicators.
+
+    Args:
+        fearandgreed_df (pd.DataFrame): Dataframe contain fear and greed data
+        others_df (pd.DataFrame): Dataframe of indicators in each category
+        dir_name (str): Main Category that contains indicators
+    """
+    try:
+        # Check if the Date column of the current DataFrame is equal to the fearandgreed Dates
+        if not np.all(fearandgreed_df['Date'] == others_df['Date']):
+            print(f"Not all DataFrames have the same Date values for '{dir_name}' directory.")
+        else:
+            print(f"All DataFrames have the same Date values for '{dir_name}' directory.")
+    except Exception as e:
+        print(f"Error: {e} for {dir_name}\n")
