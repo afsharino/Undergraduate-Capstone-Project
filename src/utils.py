@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from typing import List
 
-#_____________ read_data _____________
+#__________________________ read_data __________________________
 def read_data(base_dir:str) -> dict:
     """A function for reading datasets
 
@@ -44,7 +44,7 @@ def read_data(base_dir:str) -> dict:
 
     return data
 
-#_____________ convert_data_to_dataframe _____________
+#__________________________ convert_data_to_dataframe __________________________
 def convert_data_to_dataframe(data:dict) -> dict:
     """This function used to convert indicator's data and timestap to dataframe
 
@@ -74,12 +74,12 @@ def convert_data_to_dataframe(data:dict) -> dict:
 
     return all_dataframes
 
-#_____________ check_date_integrity _____________
+#__________________________ check_date_integrity __________________________
 def check_date_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
     """A function to check integrity between dates in each category
 
     Args:
-        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        dfs (List[pd.DataFrame]): list of indicator DataFrames
         directory_name (str): Main Category that contains indicators
     """
     try:
@@ -104,12 +104,12 @@ def check_date_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
         print(f"Error: {e} for {directory_name}\n")
 
 
-#_____________ check_shape_integrity _____________
+#__________________________ check_shape_integrity __________________________
 def check_shape_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
     """A Function to check for shape integrity between indicators in one category
 
     Args:
-        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        dfs (List[pd.DataFrame]): list of indicator DataFrames
         directory_name (str): Main Category that contains indicators
     """
     try:
@@ -148,24 +148,24 @@ def check_shape_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
     except Exception as e:
         print(f"Error: {e} for {directory_name}-{current_indicator_name}\n")
 
-#_____________ check_period_integrity _____________
+#__________________________ check_period_integrity __________________________
 def check_period_integrity(dfs:List[pd.DataFrame], directory_name:str) -> None:
     """A Function to show start and end date of the each indicator
 
     Args:
-        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        dfs (List[pd.DataFrame]): list of indicator DataFrames
         directory_name (str): Main Category that contains indicators
     """
     print(f"Period Integrity for _______ {directory_name} _______\n")
     for indicator in dfs:
         print((str(indicator.Date.min()).split()[0], str(indicator.Date.max()).split()[0]))
 
-#_____________ drop_indicator _____________
+#__________________________ drop_indicator __________________________
 def drop_indicator(dfs:List[pd.DataFrame], based_on:str, month:str=None, day:str=None) -> List[pd.DataFrame]:
     """The function is used to drop the indicators that can not be aligend with other indicators because of less datapoints
 
     Args:
-        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        dfs (List[pd.DataFrame]): list of indicator DataFrames
         based_on (str): _shoud be chosen between on of the "start" or "end"
         month (str, optional): Between this parameter and day one should be chosen with value like "08". Defaults to None.
         day (str, optional): Between this parameter and month one should be chosen with value like "08". Defaults to None.
@@ -197,12 +197,12 @@ def drop_indicator(dfs:List[pd.DataFrame], based_on:str, month:str=None, day:str
     if day != None and month!=None:
         print(f"You can not choose value for both month and day, one should be None!")
 
-
+#__________________________ align_dataframes __________________________
 def align_dataframes(dfs:List[pd.DataFrame], directory_name:str) -> List[pd.DataFrame]:
     """A f unction to align all indicators to same time period
 
     Args:
-        dfs (List[pd.DataFrame]): list of indicator DataFrame
+        dfs (List[pd.DataFrame]): list of indicator DataFrames
         directory_name (str): Main Category that contains indicators
 
     Returns:
@@ -214,3 +214,35 @@ def align_dataframes(dfs:List[pd.DataFrame], directory_name:str) -> List[pd.Data
         dfs[index].drop(columns=['index'], inplace=True)
 
     print(f"{directory_name} DataFrames aligned succeessfully :)")
+
+    return dfs
+
+
+def combine_dfs(df:List[pd.DataFrame]) -> pd.DataFrame:
+    """A function used to combine indicator DataFrames in each category
+
+    Args:
+        df (List[pd.DataFrame]): list of indicator DataFrames
+
+    Returns:
+        pd.DataFrame: A single DataFrame obtained by concatenating the input DataFrames along the columns,
+                  with any duplicate columns removed.
+
+    Example:
+    >>> df1 = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
+    >>> df2 = pd.DataFrame({'A': [5, 6], 'C': [7, 8]})
+    >>> df_list = [df1, df2]
+    >>> combined_df = remove_duplicate_columns(df_list)
+    >>> print(combined_df)
+       A  B  C
+    0  1  3  7
+    1  2  4  8
+    """
+    # Concatenate a list of DataFrames horizontally (column-wise)
+    combined_df = pd.concat(df, axis=1)
+
+    # Remove duplicate columns from the concatenated DataFrame
+    combined_df = combined_df.iloc[:, ~combined_df.columns.duplicated()]
+
+    # Return the resulting DataFrame with duplicates removed
+    return combined_df
