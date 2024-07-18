@@ -1,5 +1,7 @@
 name: thesis
 channels:
+  - pytorch
+  - anaconda
   - conda-forge
   - defaults
 dependencies:
@@ -130,7 +132,8 @@ dependencies:
   - lz4-c=1.9.4=h6a678d5_1
   - markdown=3.4.1=py311h06a4308_0
   - markupsafe=2.1.3=py311h5eee18b_0
-  - matplotlib-base=3.8.4=py311ha4ca890_2
+  - matplotlib=3.7.3=py311h38be061_0
+  - matplotlib-base=3.7.3=py311h54ef318_0
   - matplotlib-inline=0.1.6=py311h06a4308_0
   - mistune=2.0.4=py311h06a4308_0
   - mkl=2023.1.0=h213fc3f_46344
@@ -158,11 +161,13 @@ dependencies:
   - pandas=2.2.1=py311ha02d727_0
   - pandocfilters=1.5.0=pyhd3eb1b0_0
   - parso=0.8.3=pyhd3eb1b0_0
+  - patsy=0.5.6=pyhd8ed1ab_0
   - pcre2=10.42=hebb0a14_1
   - pexpect=4.8.0=pyhd3eb1b0_3
   - pillow=10.3.0=py311h5eee18b_0
   - pip=24.0=py311h06a4308_0
   - platformdirs=3.10.0=py311h06a4308_0
+  - plotly=5.22.0=pyhd8ed1ab_0
   - ply=3.11=py311h06a4308_0
   - prometheus_client=0.14.1=py311h06a4308_0
   - prompt-toolkit=3.0.43=py311h06a4308_0
@@ -206,7 +211,8 @@ dependencies:
   - rpds-py=0.10.6=py311hb02cf49_0
   - rsa=4.7.2=pyhd3eb1b0_1
   - scipy=1.13.0=py311h08b1b3b_0
-  - seaborn=0.12.2=py311h06a4308_0
+  - seaborn=0.13.2=hd8ed1ab_2
+  - seaborn-base=0.13.2=pyhd8ed1ab_2
   - send2trash=1.8.2=py311h06a4308_0
   - setuptools=69.5.1=py311h06a4308_0
   - sip=6.7.12=py311h6a678d5_0
@@ -216,7 +222,9 @@ dependencies:
   - soupsieve=2.5=py311h06a4308_0
   - sqlite=3.45.3=h5eee18b_0
   - stack_data=0.2.0=pyhd3eb1b0_0
+  - statsmodels=0.14.2=py311h18e1886_0
   - tbb=2021.8.0=hdb19cb5_0
+  - tenacity=8.3.0=pyhd8ed1ab_0
   - tensorboard=2.12.1=py311h06a4308_0
   - tensorboard-data-server=0.7.0=py311h52d8a92_0
   - tensorboard-plugin-wit=1.6.0=py_0
@@ -247,6 +255,4 @@ dependencies:
   - zeromq=4.3.5=h6a678d5_0
   - zlib=1.2.13=h5eee18b_1
   - zstd=1.5.5=hc292b87_2
-  - pip:
-      - matplotlib==3.7.3
 prefix: /home/afsharino/anaconda3/envs/thesis
