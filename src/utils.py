@@ -267,13 +267,12 @@ def fearandgreed_integrity_check(fearandgreed_df:pd.DataFrame, others_df:pd.Data
 
 
 #__________________________ strategy __________________________
-def strategy(indcator:np.ndarray, prices=np.ndarray, start_idx:int=245) -> tuple:
+def strategy(indcator:np.ndarray, prices=np.ndarray) -> tuple:
     """This function is the implementation of our strategy to run on test data
 
     Args:
         indcator (np.ndarray): indicator values,(fearandgreed or new_indicator)
         price (np.ndarray): actual prices 
-        start_idx (int, optional): Specify the starting index of the test data. Defaults to 245.
 
     Returns:
         tuple: tuple of values needed for visualization
@@ -284,8 +283,8 @@ def strategy(indcator:np.ndarray, prices=np.ndarray, start_idx:int=245) -> tuple
     total_balance = cash_balance
     profit = 0
 
-    indicator_values = indcator[start_idx:]
-    prices = prices[start_idx:]
+    indicator_values = indcator
+    prices = prices
     profits = []
     cash = []
     bitcoin = []
