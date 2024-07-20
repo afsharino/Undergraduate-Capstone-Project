@@ -4,7 +4,7 @@ import json
 import glob
 import pandas as pd
 import numpy as np
-from typing import List
+from typing import List, Tuple
 
 #__________________________ read_data __________________________
 def read_data(base_dir:str) -> dict:
@@ -264,3 +264,49 @@ def fearandgreed_integrity_check(fearandgreed_df:pd.DataFrame, others_df:pd.Data
             print(f"All DataFrames have the same Date values for '{dir_name}' directory.")
     except Exception as e:
         print(f"Error: {e} for {dir_name}\n")
+
+
+#__________________________ strategy __________________________
+def strategy(indcator:np.ndarray, prices=np.ndarray, start_idx:int=245) -> tuple:
+    """This function is the implementation of our strategy to run on test data
+
+    Args:
+        indcator (np.ndarray): indicator values,(fearandgreed or new_indicator)
+        price (np.ndarray): actual prices 
+        start_idx (int, optional): Specify the starting index of the test data. Defaults to 245.
+
+    Returns:
+        tuple: tuple of values needed for visualization
+    """
+    INITIAL_BALANCE = 10000
+    cash_balance = INITIAL_BALANCE
+    bitcoin_amount = 0
+    total_balance = cash_balance
+    profit = 0
+
+    indicator_values = indcator[start_idx:]
+    prices = prices[start_idx:]
+    profits = []
+    cash = []
+    bitcoin = []
+    total = []
+
+    for i in range(len(indicator_values)):
+        # Create New Indicator
+        indicator_value = indicator_values[i]
+        
+        price = prices[i]
+
+        total_balance =  cash_balance + (bitcoin_amount*price)
+        total.append(total_balance)
+        
+        bitcoin_amount = ((indicator_value/100) * total_balance) / price
+        bitcoin.append(bitcoin_amount)
+        
+        cash_balance = total_balance - (bitcoin_amount*price)
+        cash.append(cash_balance)
+        
+        profit = total_balance - INITIAL_BALANCE
+        profits.append(profit)
+
+    return prices, indicator_values, profits, cash, bitcoin, total
