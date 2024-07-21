@@ -2,7 +2,7 @@
 import numpy as np
 import pygad
 
-def genetic_algorithm(data, prices, num_individuals, num_genes, num_generations, mutation_rate):
+def genetic_algorithm(data, prices, num_individuals, num_genes, num_generations, mutation_rate, initial_population):
     # Define the fitness function
     def fitness_function(ga_instance, solution, solution_idx):
         new_indicator = np.dot(data, solution)
@@ -33,7 +33,7 @@ def genetic_algorithm(data, prices, num_individuals, num_genes, num_generations,
     # Create the initial population
     num_individuals = num_individuals
     num_genes = num_genes
-    initial_population = np.random.rand(num_individuals, num_genes)  # Random initialization
+    initial_population = initial_population
 
     # Configure Genetic Algorithm parameters
     num_generations = num_generations
