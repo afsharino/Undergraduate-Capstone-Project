@@ -1,6 +1,7 @@
 # Import libraries
 import numpy as np
 import pygad
+import matplotlib.pyplot as plt
 
 def genetic_algorithm(data, prices, num_individuals, num_genes, num_generations, mutation_rate, initial_population):
     # Define the fitness function
@@ -45,11 +46,14 @@ def genetic_algorithm(data, prices, num_individuals, num_genes, num_generations,
                         initial_population=initial_population,
                         fitness_func=fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=["thread", 100],
+                        parallel_processing=["thread", 50],
                         suppress_warnings=True)
 
     # Run the Genetic Algorithm
     ga_instance.run()
+
+    ga_instance.plot_fitness(plot_type="plot", label=None)
+    plt.show()
 
     # Get the best solution
     best_solution = ga_instance.best_solution()
