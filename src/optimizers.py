@@ -6,8 +6,6 @@ import tensorflow as tf
 from tensorflow.keras import layers
 #from tensorflow.python.keras import layers
 
-
-
 # use linear model 
 def linear_genetic_algorithm(data, prices, num_individuals, num_genes, num_generations, mutation_rate, initial_population):
     # Define the fitness function
@@ -58,8 +56,8 @@ def linear_genetic_algorithm(data, prices, num_individuals, num_genes, num_gener
     # Run the Genetic Algorithm
     ga_instance.run()
 
-    ga_instance.plot_fitness(plot_type="plot", label=None)
-    plt.show()
+    # Get the fitness value in each generation
+    fitness_values = ga_instance.best_solutions_fitness
 
     # Get the best solution
     best_solution = ga_instance.best_solution()
@@ -68,9 +66,10 @@ def linear_genetic_algorithm(data, prices, num_individuals, num_genes, num_gener
     best_fitness = best_solution[1]
     best_coefficients = best_solution[0]
 
-    return best_fitness, best_coefficients
+    return fitness_values, best_fitness, best_coefficients
 
-# Use MLP as a model
+
+#__________________________  Use MLP as a Model __________________________
 mlp_data = None
 mlp_prices = None
 mlp_input_layer = None
@@ -78,12 +77,12 @@ mlp_hidden_layer_1 = None
 mlp_bias_1 = None
 mlp_output_layer = None
 mlp_model = None
-#__________________________ mlp_genetic_algorithm __________________________
+
+#__________________________ mlp_fitness_function __________________________
 
 def mlp_fitness_function(ga_instance, solution, solution_idx):
     try:
         
-
         reshaped_solution = solution.reshape((-1,))
 
         weights = reshaped_solution[:mlp_input_layer * mlp_hidden_layer_1].reshape((mlp_input_layer, mlp_hidden_layer_1))
@@ -165,7 +164,7 @@ def mlp_genetic_algorithm(data, prices, num_individuals, num_genes, num_generati
     # Run the Genetic Algorithm
     ga_instance.run()
 
-    ga_instance.plot_fitness(plot_type="plot", label=None)
+    ga_instance.plot_fitness(plot_type="plot", label="MLP Model", color='purple')
     plt.show()
 
     # Get the best solution
