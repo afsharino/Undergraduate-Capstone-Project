@@ -75,8 +75,8 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
     fig.show()
 
 
-def plot_fitness(fitness_values, num_generations):
-    plt.plot(np.arange(num_generations+1),fitness_values, label="Linear Model", color='purple')
+def plot_fitness(fitness_values, num_generations, label):
+    plt.plot(np.arange(num_generations+1),fitness_values, label=label, color='purple')
     plt.xlabel("Generation")
     plt.ylabel("Fitness")
     plt.title("Genetic Algorithm Fitness Over Generations")
