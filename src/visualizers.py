@@ -1,7 +1,9 @@
+# Import Libraries
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import matplotlib.pyplot as plt
+
 
 def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, profits:list, cash:list, bitcoin:list, total:list, dates:list):
     # Initialize empty lists to store data for plotting
@@ -76,9 +78,10 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
 
 
 def plot_fitness(fitness_values, num_generations, label):
-    plt.plot(np.arange(num_generations+1),fitness_values, label=label, color='purple')
+    plt.plot(np.arange(1, num_generations+1),fitness_values[:-1], label=label, color='purple')
     plt.xlabel("Generation")
     plt.ylabel("Fitness")
     plt.title("Genetic Algorithm Fitness Over Generations")
+
     plt.legend()  # Ensure the legend is displayed
     plt.show()

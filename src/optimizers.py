@@ -56,6 +56,8 @@ def linear_genetic_algorithm(data, prices, num_individuals, num_genes, num_gener
     # Run the Genetic Algorithm
     ga_instance.run()
 
+    #ga_instance.plot_fitness()
+    
     # Get the fitness value in each generation
     fitness_values = ga_instance.best_solutions_fitness
 
@@ -92,7 +94,8 @@ def mlp_genetic_algorithm(data, prices, num_individuals, num_genes, num_generati
         max_value = np.max(new_indicator)
         # Normalize new_indicator to range [0, 100]
         new_indicator = ((new_indicator - min_value) / (max_value - min_value)) * 100
-
+        new_indicator = new_indicator.reshape(-1) 
+        
         INITIAL_BALANCE = 10000
         cash_balance = INITIAL_BALANCE
         bitcoin_amount = 0
@@ -133,7 +136,7 @@ def mlp_genetic_algorithm(data, prices, num_individuals, num_genes, num_generati
                         initial_population=initial_population,
                         fitness_func=fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=["thread", 50],
+                        #parallel_processing=["thread", 50],
                         suppress_warnings=True)
 
     # Run the Genetic Algorithm
