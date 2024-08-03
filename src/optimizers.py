@@ -30,7 +30,7 @@ def linear_fitness_function(ga_instance, solution, solution_idx):
 
     return profit
 
-def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population):
+def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, num_processors):
     global linear_data, linear_prices
 
     # Create the initial population
@@ -45,14 +45,14 @@ def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_gene
     # Data
     linear_data = data_param
     linear_prices = prices_param
-
+     
     # Create a PyGAD instance
     ga_instance = pygad.GA(num_generations=num_generations,
                         num_parents_mating=num_individuals//2,
                         initial_population=initial_population,
                         fitness_func=linear_fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=["process", 5],
+                        parallel_processing=["process", num_processors],
                         suppress_warnings=True)
 
     # Run the Genetic Algorithm
@@ -102,7 +102,7 @@ def mlp_fitness_function(ga_instance, solution, solution_idx):
 
     return profit
 
-def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, model):
+def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, model, num_processors):
     global mlp_data, mlp_prices, nn
     
     # The neural network architecture
@@ -127,7 +127,7 @@ def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, 
                         initial_population=initial_population,
                         fitness_func=mlp_fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=["process", 5],
+                        parallel_processing=["process", num_processors],
                         suppress_warnings=True)
     
     # Run the Genetic Algorithm
