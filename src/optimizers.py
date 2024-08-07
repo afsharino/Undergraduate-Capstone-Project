@@ -3,10 +3,12 @@ import numpy as np
 import pygad
 import matplotlib.pyplot as plt
 
+global data, prices
+
 #__________________________  Use Linear Combination as a Model __________________________
 # Define the fitness function
 def linear_fitness_function(ga_instance, solution, solution_idx):
-    new_indicator = np.dot(linear_data, solution)
+    new_indicator = np.dot(data, solution)
 
     # Normalize new_indicator to range [0, 100]
     min_value = np.min(new_indicator)
@@ -19,9 +21,9 @@ def linear_fitness_function(ga_instance, solution, solution_idx):
     total_balance = cash_balance
     profit = 0
     
-    for i in range(len(linear_prices)):
+    for i in range(len(prices)):
         indicator_value = new_indicator[i]
-        price = linear_prices[i]
+        price = prices[i]
         
         total_balance =  cash_balance + (bitcoin_amount * price)
         bitcoin_amount = ((indicator_value/100) * total_balance) / price
@@ -30,9 +32,9 @@ def linear_fitness_function(ga_instance, solution, solution_idx):
 
     return profit
 
-def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, num_processors):
-    global linear_data, linear_prices
-
+def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, parallel_type, num_processors):
+    global data, prices
+    
     # Create the initial population
     num_individuals = num_individuals
     num_genes = num_genes
@@ -43,8 +45,8 @@ def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_gene
     mutation_rate = mutation_rate
 
     # Data
-    linear_data = data_param
-    linear_prices = prices_param
+    data = data_param
+    prices = prices_param
      
     # Create a PyGAD instance
     ga_instance = pygad.GA(num_generations=num_generations,
@@ -52,7 +54,7 @@ def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_gene
                         initial_population=initial_population,
                         fitness_func=linear_fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=["process", num_processors],
+                        parallel_processing=[parallel_type, num_processors],
                         suppress_warnings=True)
 
     # Run the Genetic Algorithm
@@ -77,7 +79,7 @@ def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_gene
 # Define the fitness function
 def mlp_fitness_function(ga_instance, solution, solution_idx):
     nn.set_weights(solution)
-    predictions = nn.forward(mlp_data)
+    predictions = nn.forward(data)
     
     # Normalize predictions
     min_value = np.min(predictions)
@@ -91,9 +93,9 @@ def mlp_fitness_function(ga_instance, solution, solution_idx):
     total_balance = cash_balance
     profit = 0
     
-    for i in range(len(linear_prices)):
+    for i in range(len(prices)):
         indicator_value = predictions[i]
-        price = linear_prices[i]
+        price = prices[i]
         
         total_balance =  cash_balance + (bitcoin_amount * price)
         bitcoin_amount = ((indicator_value/100) * total_balance) / price
@@ -102,8 +104,8 @@ def mlp_fitness_function(ga_instance, solution, solution_idx):
 
     return profit
 
-def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, model, num_processors):
-    global mlp_data, mlp_prices, nn
+def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, model, parallel_type, num_processors):
+    global data, prices, nn
     
     # The neural network architecture
     nn = model
@@ -118,8 +120,8 @@ def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, 
     mutation_rate = mutation_rate
 
     # Data
-    mlp_data = data_param
-    mlp_prices = prices_param
+    data = data_param
+    prices = prices_param
 
     # Create a PyGAD instance
     ga_instance = pygad.GA(num_generations=num_generations,
@@ -127,7 +129,7 @@ def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, 
                         initial_population=initial_population,
                         fitness_func=mlp_fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=["process", num_processors],
+                        parallel_processing=[parallel_type, num_processors],
                         suppress_warnings=True)
     
     # Run the Genetic Algorithm
