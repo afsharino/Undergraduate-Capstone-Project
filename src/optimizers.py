@@ -2,8 +2,7 @@
 import numpy as np
 import pygad
 import matplotlib.pyplot as plt
-
-global data, prices
+from tqdm import tqdm
 
 #__________________________  Use Linear Combination as a Model __________________________
 # Define the fitness function
@@ -32,7 +31,12 @@ def linear_fitness_function(ga_instance, solution, solution_idx):
 
     return profit
 
-def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, parallel_type, num_processors):
+def linear_on_generation(ga_instance):
+    #global pbar
+    linear_pbar.update(1)
+
+
+def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, parallel_type, num_processors, verbose=None):
     global data, prices
     
     # Create the initial population
@@ -47,15 +51,29 @@ def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_gene
     # Data
     data = data_param
     prices = prices_param
-     
+
+    # Parallel Processing Setup
+    parallel_processing = None
+    if parallel_type:
+        parallel_processing = (parallel_type, num_processors)
+        
+    #Create a tqdm progress bar
+    global linear_pbar
+    on_generation = None
+    if verbose == True:
+        linear_pbar = tqdm(total=num_generations, desc="Genetic Algorithm Progress", unit="gen")
+        on_generation = linear_on_generation
+
     # Create a PyGAD instance
     ga_instance = pygad.GA(num_generations=num_generations,
                         num_parents_mating=num_individuals//2,
                         initial_population=initial_population,
                         fitness_func=linear_fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=[parallel_type, num_processors],
-                        suppress_warnings=True)
+                        parallel_processing=parallel_processing,
+                        suppress_warnings=True,
+                        #on_generation=on_generation
+                        )
 
     # Run the Genetic Algorithm
     ga_instance.run()
@@ -104,7 +122,11 @@ def mlp_fitness_function(ga_instance, solution, solution_idx):
 
     return profit
 
-def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, model, parallel_type, num_processors):
+def mlp_on_generation(ga_instance):
+    #global pbar
+    mlp_pbar.update(1)
+
+def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, num_generations, mutation_rate, initial_population, model, parallel_type, num_processors, verbose=None):
     global data, prices, nn
     
     # The neural network architecture
@@ -122,6 +144,18 @@ def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, 
     # Data
     data = data_param
     prices = prices_param
+    # Parallel Processing Setup
+    parallel_processing = None
+    if parallel_type:
+        parallel_processing = (parallel_type, num_processors)
+
+    # Create a tqdm progress bar
+    global mlp_pbar
+    on_generation = None
+    if verbose == True:
+        mlp_pbar = tqdm(total=num_generations, desc="Genetic Algorithm Progress", unit="gen")
+        on_generation = mlp_on_generation
+
 
     # Create a PyGAD instance
     ga_instance = pygad.GA(num_generations=num_generations,
@@ -129,8 +163,9 @@ def mlp_genetic_algorithm(data_param, prices_param, num_individuals, num_genes, 
                         initial_population=initial_population,
                         fitness_func=mlp_fitness_function,
                         mutation_percent_genes=mutation_rate, 
-                        parallel_processing=[parallel_type, num_processors],
-                        suppress_warnings=True)
+                        parallel_processing=parallel_processing,
+                        suppress_warnings=True,
+                        on_generation=on_generation)
     
     # Run the Genetic Algorithm
     ga_instance.run()

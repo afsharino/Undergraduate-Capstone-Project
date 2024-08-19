@@ -313,19 +313,21 @@ def strategy(indcator:np.ndarray, prices=np.ndarray) -> tuple:
 
 #__________________________ process_window __________________________
 def process_window(args):
-    i, all_indicators, combined_dataframe, num_individuals, num_genes, num_generations, mutation_rate, initial_population, WINDOW_SIZE = args
+    i, all_indicators, combined_dataframe, num_individuals, num_genes, num_generations, mutation_rate, initial_population, parallel_type, num_processors, WINDOW_SIZE = args
     train_data = all_indicators[i:i+WINDOW_SIZE]
     prices = combined_dataframe.price[i:i+WINDOW_SIZE].values
 
     # Find Coefficients in past 6 months
     fitness_values, best_fitness_sliding_window, best_coefficients_sliding_window = linear_genetic_algorithm(
-        data=train_data,
-        prices=prices,
+        data_param=train_data,
+        prices_param=prices,
         num_individuals=num_individuals,
         num_genes=num_genes,
         num_generations=num_generations,
         mutation_rate=mutation_rate,
-        initial_population=initial_population
+        initial_population=initial_population,
+        parallel_type=parallel_type,
+        num_processors=num_processors,
     )
     # print("*"*50)
     # print(f"i = {i}")
