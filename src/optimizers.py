@@ -12,7 +12,20 @@ def linear_fitness_function(ga_instance, solution, solution_idx):
     # Normalize new_indicator to range [0, 100]
     min_value = np.min(new_indicator)
     max_value = np.max(new_indicator)
-    new_indicator = ((new_indicator - min_value) / (max_value - min_value)) * 100
+
+    if min_value == max_value:
+        # If min_value equals max_value, avoid normalization
+        # Set all predictions to a fixed value
+        print("***************************************")
+        print(solution, end="\n")
+        print("***************************************")
+        
+        predictions.fill(min_value)
+
+    else:
+        # Normalize new_indicator to range [0, 100]
+        predictions = ((predictions - min_value) / (max_value - min_value)) * 100
+
     
     INITIAL_BALANCE = 10000
     cash_balance = INITIAL_BALANCE
@@ -102,8 +115,20 @@ def mlp_fitness_function(ga_instance, solution, solution_idx):
     # Normalize predictions
     min_value = np.min(predictions)
     max_value = np.max(predictions)
-    # Normalize new_indicator to range [0, 100]
-    predictions = ((predictions - min_value) / (max_value - min_value)) * 100
+
+
+    if min_value == max_value:
+        # If min_value equals max_value, avoid normalization
+        # Set all predictions to a fixed value
+        print("***************************************")
+        print(solution, end="\n")
+        print("***************************************")
+        
+        predictions.fill(min_value)
+
+    else:
+        # Normalize new_indicator to range [0, 100]
+        predictions = ((predictions - min_value) / (max_value - min_value)) * 100
 
     INITIAL_BALANCE = 10000
     cash_balance = INITIAL_BALANCE
