@@ -15,6 +15,15 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
     total_balance_data = total
     date_data = list(dates)
 
+    # Calculate Absolute Drawdown
+    initial_balance = total_balance_data[0]  # Assuming the first total balance as the initial balance
+    absolute_drawdown_data = [max(0, initial_balance - balance) for balance in total_balance_data]
+
+    # Find Maximum Drawdown and the corresponding date
+    max_drawdown_value = max(absolute_drawdown_data)
+    max_drawdown_index = absolute_drawdown_data.index(max_drawdown_value)
+    max_drawdown_date = date_data[max_drawdown_index]
+
     # Create Plotly figure
     fig = go.Figure()
 
@@ -25,6 +34,13 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
     fig.add_trace(go.Scatter(x=date_data, y=cash_balance_data, mode='lines', name='Cash Balance'))
     fig.add_trace(go.Scatter(x=date_data, y=bitcoin_amount_data, mode='lines', name='Bitcoin Amount'))
     fig.add_trace(go.Scatter(x=date_data, y=total_balance_data, mode='lines', name='Total Balance'))
+
+     # Add trace for Absolute Drawdown
+    fig.add_trace(go.Scatter(x=date_data, y=absolute_drawdown_data, mode='lines', name='Absolute Drawdown'))
+
+    # Mark the Maximum Drawdown with a point and annotation
+    fig.add_trace(go.Scatter(x=[max_drawdown_date], y=[max_drawdown_value], name='Max Drawdown', marker=dict(size=12, color='red', symbol='bowtie')))
+
 
     # Update layout with labels
     fig.update_layout(title='Price and Trading Metrics Progression',
