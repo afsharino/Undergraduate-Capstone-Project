@@ -20,12 +20,11 @@ def linear_fitness_function(ga_instance, solution, solution_idx):
         print(solution, end="\n")
         print("***************************************")
         
-        predictions.fill(min_value)
+        new_indicator.fill(min_value)
 
     else:
         # Normalize new_indicator to range [0, 100]
-        predictions = ((predictions - min_value) / (max_value - min_value)) * 100
-
+        new_indicator = ((new_indicator - min_value) / (max_value - min_value)) * 100
     
     INITIAL_BALANCE = 10000
     cash_balance = INITIAL_BALANCE

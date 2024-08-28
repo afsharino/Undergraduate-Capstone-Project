@@ -66,7 +66,8 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
 
     # Update layout
     fig.update_layout(title='Price and Trading Metrics Progression',
-                      height=900, showlegend=False, 
+                      height=900,
+                      showlegend=True,
                       hovermode='x unified')
 
     fig.update_xaxes(title_text='Date', row=3, col=1)
