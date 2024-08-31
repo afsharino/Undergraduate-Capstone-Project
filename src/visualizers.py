@@ -5,7 +5,7 @@ from plotly.subplots import make_subplots
 import matplotlib.pyplot as plt
 
 
-def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, profits:list, cash:list, bitcoin:list, total:list, dates:list):
+def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, profits:list, cash:list, bitcoin:list, total:list, dates:list, absolute_drawdown:list):
     # Initialize empty lists to store data for plotting
     price_data = list(prices)
     fear_and_greed_data = list(indicator_values)
@@ -14,10 +14,7 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
     bitcoin_amount_data = bitcoin
     total_balance_data = total
     date_data = list(dates)
-
-    # Calculate Absolute Drawdown
-    initial_balance = total_balance_data[0]  # Assuming the first total balance as the initial balance
-    absolute_drawdown_data = [max(0, initial_balance - balance) for balance in total_balance_data]
+    absolute_drawdown_data = absolute_drawdown
 
     # Find Maximum Drawdown and the corresponding date
     max_drawdown_value = max(absolute_drawdown_data)
@@ -43,10 +40,11 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
 
 
     # Update layout with labels
-    fig.update_layout(title='Price and Trading Metrics Progression',
+    fig.update_layout(title={'text': 'Price and Trading Metrics Progression', 'x': 0.5, 'y': 0.95, 'xanchor': 'center', 'yanchor': 'top'},
+                      height=800,
                       xaxis_title='Date',
                       yaxis_title='Value',
-                      legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                      legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="right", x=0.74),
                       hovermode='x unified')
 
     # Show the figure
@@ -81,7 +79,7 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
     add_traces(fig, 3, downtrend_data)
 
     # Update layout
-    fig.update_layout(title='Price and Trading Metrics Progression',
+    fig.update_layout(title={'text': 'Price and Trading Metrics Progression', 'x': 0.5, 'y': 0.95, 'xanchor': 'center', 'yanchor': 'top'},
                       height=900,
                       showlegend=True,
                       hovermode='x unified')
@@ -102,3 +100,51 @@ def plot_fitness(fitness_values, num_generations, label):
 
     plt.legend()  # Ensure the legend is displayed
     plt.show()
+
+
+def compare_models(model_results, model_names, dates):
+    """
+    Compare multiple models by plotting their results on the same chart.
+
+    Args:
+        model_results (list): A list of tuples, where each tuple contains (prices, indicator_values, profits, cash, bitcoin, total).
+        model_names (list): A list of model names corresponding to the model results.
+        dates (list): A list of dates for the x-axis.
+    """
+    
+    # Create Plotly figure
+    fig = go.Figure()
+
+    # Iterate over each model's results and plot them on the same chart
+    for i, (prices, indicator_values, profits, cash, bitcoin, total, drawdown) in enumerate(model_results):
+        model_name = model_names[i]
+
+        # Add traces for each model's data series
+        fig.add_trace(go.Scatter(x=dates, y=prices, mode='lines', name=f'{model_name} Price'))
+        fig.add_trace(go.Scatter(x=dates, y=indicator_values, mode='lines', name=f'{model_name} Indicator'))
+        fig.add_trace(go.Scatter(x=dates, y=profits, mode='lines', name=f'{model_name} Profit'))
+        fig.add_trace(go.Scatter(x=dates, y=cash, mode='lines', name=f'{model_name} Cash Balance'))
+        fig.add_trace(go.Scatter(x=dates, y=bitcoin, mode='lines', name=f'{model_name} Bitcoin Amount'))
+        fig.add_trace(go.Scatter(x=dates, y=total, mode='lines', name=f'{model_name} Total Balance'))
+        fig.add_trace(go.Scatter(x=dates, y=drawdown, mode='lines', name=f'{model_name} Absolute Drawdown',))
+
+
+    # Update layout with labels
+    fig.update_layout(
+        title={'text': 'Comparison of Trading Strategies', 'x': 0.5, 'y': 0.95, 'xanchor': 'center', 'yanchor': 'top'},
+        legend=dict(
+            orientation="h",  # Arrange the legend items horizontally
+            yanchor="top", 
+            y=-0.2,  # Adjust this value to move the legend further down
+            xanchor="center", 
+            x=0.5,
+
+        ),
+        xaxis_title='Date',
+        yaxis_title='Value',
+        height=800,
+        hovermode='x unified',
+    )
+
+    # Show the figure
+    fig.show()
