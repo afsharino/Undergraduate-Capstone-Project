@@ -1,41 +1,58 @@
-# Import Libraries
+# # Import Libraries
 import numpy as np
 
 class NeuralNetwork:
-    def __init__(self, input_layer_size, hidden_layer_size, output_layer_size):
-        # Initialize weights and biases
-        self.weights_input_hidden = np.random.randn(input_layer_size, hidden_layer_size)
-        self.bias_hidden = np.random.randn(hidden_layer_size)
-        self.weights_hidden_output = np.random.randn(hidden_layer_size, output_layer_size)
-        self.bias_output = np.random.randn(output_layer_size)
-    
+    def __init__(self, layer_sizes):
+        """
+        layer_sizes: List of layer sizes. Example: [input_size, hidden_1_size, ..., hidden_n_size, output_size]
+        """
+        self.num_layers = len(layer_sizes) - 1  # Total number of layers, excluding input layer
+        self.weights = []
+        self.biases = []
+        
+        # Initialize weights and biases for each layer
+        for i in range(self.num_layers):
+            self.weights.append(np.random.randn(layer_sizes[i], layer_sizes[i+1]))
+            self.biases.append(np.random.randn(layer_sizes[i+1]))
+
     def relu(self, x):
         return np.maximum(0, x)
+
+    def linear(self, x):
+        return x
     
     def forward(self, X):
-        # Forward pass
-        self.hidden_layer_input = np.dot(X, self.weights_input_hidden) + self.bias_hidden
-        self.hidden_layer_output = self.relu(self.hidden_layer_input)
-        self.output_layer_input = np.dot(self.hidden_layer_output, self.weights_hidden_output) + self.bias_output
-        self.output_layer_output = self.relu(self.output_layer_input)
-        return self.output_layer_output
+        """
+        Forward pass through the network with multiple hidden layers.
+        """
+        activation = X  # Input layer
+        
+        # Iterate through each hidden layer
+        for i in range(self.num_layers - 1):  # Exclude the final layer (output layer)
+            z = np.dot(activation, self.weights[i]) + self.biases[i]
+            activation = self.relu(z)
+        
+        # Output layer (assuming linear activation for output)
+        z_output = np.dot(activation, self.weights[-1]) + self.biases[-1]
+        output = self.linear(z_output)
+        
+        return output
 
     def set_weights(self, weights):
-        input_hidden_end = self.weights_input_hidden.size
-        self.weights_input_hidden = weights[:input_hidden_end].reshape(self.weights_input_hidden.shape)
-        
-        bias_hidden_end = input_hidden_end + self.bias_hidden.size
-        self.bias_hidden = weights[input_hidden_end:bias_hidden_end]
-        
-        hidden_output_end = bias_hidden_end + self.weights_hidden_output.size
-        self.weights_hidden_output = weights[bias_hidden_end:hidden_output_end].reshape(self.weights_hidden_output.shape)
-        
-        self.bias_output = weights[hidden_output_end:]
-    
+        start = 0
+        for i in range(self.num_layers):
+            weight_size = self.weights[i].size
+            bias_size = self.biases[i].size
+            
+            # Reshape the flattened weights into matrices and vectors
+            self.weights[i] = weights[start:start+weight_size].reshape(self.weights[i].shape)
+            start += weight_size
+            self.biases[i] = weights[start:start+bias_size]
+            start += bias_size
+
     def get_weights(self):
-        return np.concatenate([
-            self.weights_input_hidden.flatten(),
-            self.bias_hidden,
-            self.weights_hidden_output.flatten(),
-            self.bias_output
-        ])
+        # Flatten all weights and biases into a single vector
+        all_weights = [w.flatten() for w in self.weights]
+        all_biases = [b for b in self.biases]
+        return np.concatenate(all_weights + all_biases)
+
