@@ -290,6 +290,7 @@ def strategy(indcator:np.ndarray, prices=np.ndarray) -> tuple:
     cash = []
     bitcoin = []
     total = []
+    prfits_percent = []
 
     for i in range(len(indicator_values)):
         # Create New Indicator
@@ -308,8 +309,12 @@ def strategy(indcator:np.ndarray, prices=np.ndarray) -> tuple:
         
         profit = total_balance - INITIAL_BALANCE
         profits.append(profit)
+       
+        profit_percent = (total_balance - INITIAL_BALANCE) / 100
+        prfits_percent.append(profit_percent)
+    
 
-    return prices, indicator_values, profits, cash, bitcoin, total
+    return prices, indicator_values, profits, cash, bitcoin, total, prfits_percent
 
 #__________________________ process_window __________________________
 def process_window(args):

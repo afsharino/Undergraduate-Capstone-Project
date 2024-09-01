@@ -3,9 +3,9 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import matplotlib.pyplot as plt
+from datetime import datetime
 
-
-def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, profits:list, cash:list, bitcoin:list, total:list, dates:list, absolute_drawdown:list):
+def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, profits:list, cash:list, bitcoin:list, total:list, dates:list, absolute_drawdown:list, profit_percent:list):
     # Initialize empty lists to store data for plotting
     price_data = list(prices)
     fear_and_greed_data = list(indicator_values)
@@ -15,6 +15,7 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
     total_balance_data = total
     date_data = list(dates)
     absolute_drawdown_data = absolute_drawdown
+    profit_percent_data = profit_percent
 
     # Find Maximum Drawdown and the corresponding date
     max_drawdown_value = max(absolute_drawdown_data)
@@ -28,6 +29,7 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
     fig.add_trace(go.Scatter(x=date_data, y=price_data, mode='lines', name='Price'))
     fig.add_trace(go.Scatter(x=date_data, y=fear_and_greed_data, mode='markers', name=indicator_name, marker=dict(size=8)))
     fig.add_trace(go.Scatter(x=date_data, y=profit_data, mode='lines', name='Profit'))
+    fig.add_trace(go.Scatter(x=date_data, y=profit_percent_data, mode='lines', name='Profit %'))
     fig.add_trace(go.Scatter(x=date_data, y=cash_balance_data, mode='lines', name='Cash Balance'))
     fig.add_trace(go.Scatter(x=date_data, y=bitcoin_amount_data, mode='lines', name='Bitcoin Amount'))
     fig.add_trace(go.Scatter(x=date_data, y=total_balance_data, mode='lines', name='Total Balance'))
@@ -72,10 +74,11 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
 
     # Define a helper function to add traces for each segment
     def add_traces(fig, row, data):
-        prices, indicator_values, profits, cash, bitcoin, total, dates = data
+        prices, indicator_values, profits, cash, bitcoin, total, dates, profit_percent_data = data
         fig.add_trace(go.Scatter(x=dates, y=prices, mode='lines', name='Price'), row=row, col=1)
         fig.add_trace(go.Scatter(x=dates, y=indicator_values, mode='lines', name=indicator_name), row=row, col=1)
         fig.add_trace(go.Scatter(x=dates, y=profits, mode='lines', name='Profit'), row=row, col=1)
+        fig.add_trace(go.Scatter(x=dates, y=profit_percent_data, mode='lines', name='Profit %'), row=row, col=1)
         fig.add_trace(go.Scatter(x=dates, y=cash, mode='lines', name='Cash Balance'), row=row, col=1)
         fig.add_trace(go.Scatter(x=dates, y=bitcoin, mode='lines', name='Bitcoin Amount'), row=row, col=1)
         fig.add_trace(go.Scatter(x=dates, y=total, mode='lines', name='Total Balance'), row=row, col=1)
@@ -129,13 +132,14 @@ def compare_models(model_results, model_names, dates):
     fig = go.Figure()
 
     # Iterate over each model's results and plot them on the same chart
-    for i, (prices, indicator_values, profits, cash, bitcoin, total, drawdown) in enumerate(model_results):
+    for i, (prices, indicator_values, profits, cash, bitcoin, total, drawdown, prfit_percent) in enumerate(model_results):
         model_name = model_names[i]
 
         # Add traces for each model's data series
         fig.add_trace(go.Scatter(x=dates, y=prices, mode='lines', name=f'{model_name} Price'))
         fig.add_trace(go.Scatter(x=dates, y=indicator_values, mode='lines', name=f'{model_name} Indicator'))
         fig.add_trace(go.Scatter(x=dates, y=profits, mode='lines', name=f'{model_name} Profit'))
+        fig.add_trace(go.Scatter(x=dates, y=prfit_percent, mode='lines', name=f'{model_name} Profit %'))
         fig.add_trace(go.Scatter(x=dates, y=cash, mode='lines', name=f'{model_name} Cash Balance'))
         fig.add_trace(go.Scatter(x=dates, y=bitcoin, mode='lines', name=f'{model_name} Bitcoin Amount'))
         fig.add_trace(go.Scatter(x=dates, y=total, mode='lines', name=f'{model_name} Total Balance'))
