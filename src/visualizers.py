@@ -45,7 +45,14 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
                       xaxis_title='Date',
                       yaxis_title='Value',
                       legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="right", x=0.74),
+    
                       hovermode='x unified')
+    
+    # Generate a unique filename using the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"../results/trading_metrics_subplot_{indicator_name}_{timestamp}.html"
+    # Save the figure as an interactive HTML file
+    fig.write_html(filename)
 
     # Show the figure
     fig.show()
@@ -88,6 +95,12 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
     fig.update_yaxes(title_text='Value', row=1, col=1)
     fig.update_yaxes(title_text='Value', row=2, col=1)
     fig.update_yaxes(title_text='Value', row=3, col=1)
+
+    # Generate a unique filename using the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"../results/trading_metrics_subplot_{indicator_name}_{timestamp}.html"
+    # Save the figure as an interactive HTML file
+    fig.write_html(filename)
 
     fig.show()
 
