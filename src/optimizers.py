@@ -12,7 +12,7 @@ def linear_fitness_function(ga_instance, solution, solution_idx):
     # Normalize new_indicator to range [0, 100]
     min_value = np.min(new_indicator)
     max_value = np.max(new_indicator)
-
+    
     if min_value == max_value:
         # If min_value equals max_value, avoid normalization
         # Set all predictions to a fixed value
@@ -84,7 +84,7 @@ def linear_genetic_algorithm(data_param, prices_param, num_individuals, num_gene
                         mutation_percent_genes=mutation_rate, 
                         parallel_processing=parallel_processing,
                         suppress_warnings=True,
-                        #on_generation=on_generation
+                        on_generation=on_generation
                         )
 
     # Run the Genetic Algorithm

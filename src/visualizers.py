@@ -5,7 +5,7 @@ from plotly.subplots import make_subplots
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, profits:list, cash:list, bitcoin:list, total:list, dates:list, absolute_drawdown:list, profit_percent:list):
+def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, profits:list, cash:list, bitcoin:list, total:list, dates:list, maximum_drawdown:list, profit_percent:list):
     # Initialize empty lists to store data for plotting
     price_data = list(prices)
     fear_and_greed_data = list(indicator_values)
@@ -14,12 +14,12 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
     bitcoin_amount_data = bitcoin
     total_balance_data = total
     date_data = list(dates)
-    absolute_drawdown_data = absolute_drawdown
+    maximum_drawdown_data = maximum_drawdown
     profit_percent_data = profit_percent
 
     # Find Maximum Drawdown and the corresponding date
-    max_drawdown_value = max(absolute_drawdown_data)
-    max_drawdown_index = absolute_drawdown_data.index(max_drawdown_value)
+    max_drawdown_value = max(maximum_drawdown_data)
+    max_drawdown_index = maximum_drawdown_data.index(max_drawdown_value)
     max_drawdown_date = date_data[max_drawdown_index]
 
     # Create Plotly figure
@@ -35,18 +35,18 @@ def plot(indicator_name:str, prices:np.ndarray, indicator_values:np.ndarray, pro
     fig.add_trace(go.Scatter(x=date_data, y=total_balance_data, mode='lines', name='Total Balance'))
 
      # Add trace for Absolute Drawdown
-    fig.add_trace(go.Scatter(x=date_data, y=absolute_drawdown_data, mode='lines', name='Absolute Drawdown'))
+    fig.add_trace(go.Scatter(x=date_data, y=maximum_drawdown_data, mode='lines', name='Maximum Drawdown %'))
 
     # Mark the Maximum Drawdown with a point and annotation
-    fig.add_trace(go.Scatter(x=[max_drawdown_date], y=[max_drawdown_value], name='Max Drawdown', marker=dict(size=12, color='red', symbol='bowtie')))
+    fig.add_trace(go.Scatter(x=[max_drawdown_date], y=[max_drawdown_value], name='Max Drawdown value', marker=dict(size=12, color='red', symbol='bowtie')))
 
 
     # Update layout with labels
     fig.update_layout(title={'text': 'Price and Trading Metrics Progression', 'x': 0.5, 'y': 0.95, 'xanchor': 'center', 'yanchor': 'top'},
-                      height=800,
+                      height=700,
                       xaxis_title='Date',
                       yaxis_title='Value',
-                      legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="right", x=0.74),
+                      legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="right", x=0.95),
     
                       hovermode='x unified')
     
@@ -69,7 +69,7 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
         sideway_data (tuple): Tuple containing prices, indicator values, profits, cash, bitcoin, total, and dates for sideway.
         downtrend_data (tuple): Tuple containing prices, indicator values, profits, cash, bitcoin, total, and dates for downtrend.
     """
-    fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.1, subplot_titles=("Uptrend Segment", "Sideway Segment", "Downtrend Segment"))
+    fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.1, subplot_titles=("Downtrend Segment", "Sideway Segment", "Uptrend Segment"))
     # fig = make_subplots(rows=3, cols=1, vertical_spacing=0.1, subplot_titles=("Uptrend Segment", "Sideway Segment", "Downtrend Segment"))
 
     # Define a helper function to add traces for each segment
@@ -90,7 +90,7 @@ def subplot(indicator_name, uptrend_data, sideway_data, downtrend_data):
 
     # Update layout
     fig.update_layout(title={'text': 'Price and Trading Metrics Progression', 'x': 0.5, 'y': 0.95, 'xanchor': 'center', 'yanchor': 'top'},
-                      height=900,
+                      height=700,
                       showlegend=True,
                       hovermode='x unified')
 
@@ -139,11 +139,11 @@ def compare_models(model_results, model_names, dates):
         fig.add_trace(go.Scatter(x=dates, y=prices, mode='lines', name=f'{model_name} Price'))
         fig.add_trace(go.Scatter(x=dates, y=indicator_values, mode='lines', name=f'{model_name} Indicator'))
         fig.add_trace(go.Scatter(x=dates, y=profits, mode='lines', name=f'{model_name} Profit'))
-        fig.add_trace(go.Scatter(x=dates, y=prfit_percent, mode='lines', name=f'{model_name} Profit %'))
+        fig.add_trace(go.Scatter(x=dates, y=prfit_percent, mode='lines', name=f'{model_name} Profit%'))
         fig.add_trace(go.Scatter(x=dates, y=cash, mode='lines', name=f'{model_name} Cash Balance'))
         fig.add_trace(go.Scatter(x=dates, y=bitcoin, mode='lines', name=f'{model_name} Bitcoin Amount'))
         fig.add_trace(go.Scatter(x=dates, y=total, mode='lines', name=f'{model_name} Total Balance'))
-        fig.add_trace(go.Scatter(x=dates, y=drawdown, mode='lines', name=f'{model_name} Absolute Drawdown',))
+        fig.add_trace(go.Scatter(x=dates, y=drawdown, mode='lines', name=f'{model_name} Maximum Drawdown',))
 
 
     # Update layout with labels
@@ -155,6 +155,11 @@ def compare_models(model_results, model_names, dates):
             y=-0.2,  # Adjust this value to move the legend further down
             xanchor="center", 
             x=0.5,
+            font=dict(  # Adjust the legend font
+            family="Arial",  # You can specify any font family here
+            size=9.8,  # Set the font size
+            color="black"  # Set the font color
+        ),
 
         ),
         xaxis_title='Date',

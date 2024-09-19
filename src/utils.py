@@ -316,13 +316,13 @@ def strategy(indcator:np.ndarray, prices=np.ndarray) -> tuple:
 
     return prices, indicator_values, profits, cash, bitcoin, total, prfits_percent
 
-#__________________________ process_window __________________________
+# __________________________ process_window __________________________
 def process_window(args):
-    i, all_indicators, combined_dataframe, num_individuals, num_genes, num_generations, mutation_rate, initial_population, parallel_type, num_processors, WINDOW_SIZE = args
+    i, all_indicators, combined_dataframe, num_individuals, num_genes, num_generations, mutation_rate, initial_population, parallel_type, num_processors, WINDOW_SIZE, STEP_SIZE = args
     train_data = all_indicators[i:i+WINDOW_SIZE]
     prices = combined_dataframe.price[i:i+WINDOW_SIZE].values
 
-    # Find Coefficients in past 6 months
+    # Run Genetic Algorithm to find the best coefficients
     fitness_values, best_fitness_sliding_window, best_coefficients_sliding_window = linear_genetic_algorithm(
         data_param=train_data,
         prices_param=prices,
@@ -334,23 +334,19 @@ def process_window(args):
         parallel_type=parallel_type,
         num_processors=num_processors,
     )
-    # print("*"*50)
-    # print(f"i = {i}")
-    # print(best_fitness_sliding_window)
-    # plot_fitness(fitness_values, num_generations, "Linear Sliding window Model")
-    # print("*"*50)
-    # print('\n\n')
-    # Create New Indicator
+
+    # Apply coefficients to generate new indicator
+    new_indicator = np.dot(all_indicators[i:i+WINDOW_SIZE+STEP_SIZE], best_coefficients_sliding_window)
     
-    new_indicator = np.dot(all_indicators[i:i+WINDOW_SIZE+1], best_coefficients_sliding_window)
+    # Normalize new_indicator to range [0, 100]
     min_value = np.min(new_indicator)
     max_value = np.max(new_indicator)
-    # Normalize new_indicator to range [0, 100]
     new_indicator = ((new_indicator - min_value) / (max_value - min_value)) * 100
     
+    # Return only the last value if it's not the first window, otherwise return the whole range
     if i == 0:
         new_indicator_values = list(new_indicator)
-    else:
-        new_indicator_values = [new_indicator[-1]]
 
+    else:
+        new_indicator_values = list(new_indicator[WINDOW_SIZE:])
     return (i, new_indicator_values)
